@@ -1,0 +1,59 @@
+import { readFileSync } from 'fs';
+import { start } from 'repl';
+
+
+class PwdPolicy {    
+    minNum: number = 0;
+    maxNum: number = 0;
+    subString: string = "";
+};
+
+const StringToPolicy = (inp: string): PwdPolicy => {
+    let [limits, subString] = inp.split(" ");
+    let ret = new PwdPolicy;
+    [ret.minNum, ret.maxNum] = limits.split("-").map(c => parseInt(c));
+    ret.subString = subString.trim();
+    return ret;
+}
+
+const SumNumbers = (nums: number[]) : number => nums.reduce((prev, curr) => prev + curr);
+
+const IsGoodPwd =  (policy: PwdPolicy, pwd: string) : boolean => {
+    let pwdChars = pwd.split("");
+    let pwdMatch = pwdChars.map<number>(c => c === policy.subString ? 1 : 0);
+    let num = SumNumbers(pwdMatch);
+    return num >= policy.minNum && num <= policy.maxNum;
+}
+
+const IsGoodPwdb =  (policy: PwdPolicy, pwd: string) : boolean => {
+    let pwdChars = pwd.split("");
+    let num = pwd.charAt(policy.minNum - 1) === policy.subString ? 1 : 0;
+    num += pwd.charAt(policy.maxNum - 1) === policy.subString ? 1 : 0;
+    return num == 1;
+}
+
+const IsGoodEntry = (entry: string, evalFun: (policy: PwdPolicy, pwd: string) => boolean): boolean => {
+    let [policyStr, pwd] = entry.split(":").map(s => s.trim());
+    let policy = StringToPolicy(policyStr);
+
+    let ret = evalFun(policy, pwd);
+    //console.log(entry, ret);
+    return ret;
+}
+
+const GetInputRows = () : string[] => {
+    const intext = readFileSync('./input/2.txt', 'utf-8');
+    return intext.split("\n");
+}
+
+export const day2 = () => {
+    let rows = GetInputRows();
+    let answer = rows.map<number>(row => IsGoodEntry(row, IsGoodPwd) ? 1 : 0).reduce((prev, curr) => prev + curr);
+    console.log(answer);
+}
+
+export const day2b = () => {
+    let rows = GetInputRows();
+    let answer = rows.map<number>(row => IsGoodEntry(row, IsGoodPwdb) ? 1 : 0).reduce((prev, curr) => prev + curr);
+    console.log(answer);
+}
