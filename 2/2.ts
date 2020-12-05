@@ -46,14 +46,16 @@ const GetInputRows = () : string[] => {
     return intext.split("\n");
 }
 
+const IsGoodEntryCurried = (evalFun: (policy: PwdPolicy, pwd: string) => boolean) => (entry: string): boolean => IsGoodEntry(entry, evalFun);
+
+const SumGoodEntries = (rows: string[], criterion: (entry: string) => boolean): number => 
+    rows.map<number>(row => criterion(row) ? 1 : 0).reduce((prev, curr) => prev + curr);
+
 export const day2 = () => {
     let rows = GetInputRows();
-    let answer = rows.map<number>(row => IsGoodEntry(row, IsGoodPwd) ? 1 : 0).reduce((prev, curr) => prev + curr);
+    let pwdEvalFun = IsGoodEntryCurried(IsGoodPwd);
+    let answer = SumGoodEntries(rows, pwdEvalFun);
     console.log(answer);
 }
 
-export const day2b = () => {
-    let rows = GetInputRows();
-    let answer = rows.map<number>(row => IsGoodEntry(row, IsGoodPwdb) ? 1 : 0).reduce((prev, curr) => prev + curr);
-    console.log(answer);
-}
+export const day2b = () => console.log(SumGoodEntries(GetInputRows(), IsGoodEntryCurried(IsGoodPwdb)));
