@@ -1,5 +1,4 @@
 import { readFileSync } from 'fs';
-import { start } from 'repl';
 
 
 class PwdPolicy {    
