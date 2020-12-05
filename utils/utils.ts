@@ -1,7 +1,8 @@
 import { readFileSync } from 'fs';
 
+export const getInputText = (filename: string) : string => readFileSync(filename, 'utf-8');
+
 export const getInputRows = (filename: string) : string[] => {
-    const intext = readFileSync(filename, 'utf-8');
+    const intext = getInputText(filename);
     return intext.split("\n").map(row => row.trim());
 }
-
