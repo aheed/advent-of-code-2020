@@ -6,6 +6,7 @@ import { day5, day5b } from "./5";
 import { day6, day6b } from "./6/6";
 import { day7 } from "./7";
 import { day8, day8b } from "./8/8";
+import { day9 } from "./9/9";
 
 // day1();
 // day1alt();
@@ -21,6 +22,8 @@ import { day8, day8b } from "./8/8";
 // day6();
 // day6b();
 // day7();
-day8();
-day8b();
+// day8();
+// day8b();
+day9();
+
 
