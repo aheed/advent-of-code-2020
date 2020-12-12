@@ -8,7 +8,7 @@ export const day11 = () => {
     //let rows = getInputRows('./input/11ex.txt');
 
     let seats: Seat[][] = rows.map(row => row.split('') as Seat[]);
-    let last = [...seats];
+    let original = [...seats];
 
     const indexToCoords = (rowWidth: number, index: number): [x: number, y: number] =>  [index % rowWidth, Math.floor(index / rowWidth)];
     const coordsToIndex = (rowWidth:number, x:number, y:number): number => y * rowWidth + x;
@@ -22,10 +22,6 @@ export const day11 = () => {
     let nofColumns = seats[0].length;
     let nofRows = seats.length;
 
-    /*const processSeatByIndex = (seats: Seat[][], index: number): Seat => {
-        let [x, y] = indexToCoords(nofColumns, index);
-        return processSeatByCoords(seats, x, y);
-    }*/
 
     const processSeatByCoords = (seats: Seat[][], x: number, y: number): Seat => {
         //let freeSeats = 0;
@@ -38,14 +34,11 @@ export const day11 = () => {
 
                 let xs = x + relx;
                 let ys = y + rely;
-                //console.log('ccc', nofColumns, nofRows, xs, ys);
+
                 if (!inBounds(nofColumns, nofRows, xs, ys)) {
-                    //console.log('aaa', nofColumns, nofRows, xs, ys);
                     continue;
                 }
-                //console.log('bbb', nofColumns, nofRows, xs, ys);
 
-                //console.log(ys, xs, seats[ys]);
                 let seat = seats[ys][xs];
 
                 if (seat == 'L') {
@@ -68,6 +61,51 @@ export const day11 = () => {
         return currSeat;
     }
 
+    const processSeatByCoords2 = (seats: Seat[][], x: number, y: number): Seat => {
+        let occupiedSeats = 0;
+        for (let relx=-1; relx <= 1; ++relx) {
+            for (let rely=-1; rely <= 1; ++rely) {
+                if (relx == 0 && rely == 0) {
+                    continue;
+                }
+
+                let seat = '.';
+                let xs = x + relx;
+                let ys = y + rely;
+
+                if (Math.abs(x - xs) != Math.abs(y - ys)
+                    && relx != 0 && rely != 0) {
+                    continue;
+                }
+
+                while (inBounds(nofColumns, nofRows, xs, ys)) {
+                    seat = seats[ys][xs];
+                    if (seat == '#') {
+                        occupiedSeats++;
+                        break;
+                    }
+                    else if (seat == 'L') {
+                        break;
+                    }
+
+                    xs += relx;
+                    ys += rely;
+                }
+                
+            }
+        }
+
+        //console.log('occupied:', occupiedSeats);
+        let currSeat = seats[y][x];
+        if (currSeat == 'L' && occupiedSeats == 0) {
+            currSeat = '#';
+        }
+        else if (currSeat == '#' && occupiedSeats >= 5) {
+            currSeat = 'L';
+        }
+        return currSeat;
+    }
+
     const processRound = () => {
         seats = seats.map((seatRow, rowIndex, arr) => {
             seatRow = seatRow.map((seat, colIndex, arr) => processSeatByCoords(seats, colIndex, rowIndex));
@@ -75,64 +113,31 @@ export const day11 = () => {
         });
     }
 
-    /*console.log("11");
-    //console.log(rows);
-    console.log(seats);
-    console.log(nofColumns);
-    console.log(nofRows);
-    let [xx, yy] = indexToCoords(nofColumns, nofRows * nofColumns);
-    console.log([xx, yy]);
-    console.log(coordsToIndex(nofColumns, xx, yy));
+    const processRound2 = () => {
+        seats = seats.map((seatRow, rowIndex, arr) => {
+            seatRow = seatRow.map((seat, colIndex, arr) => processSeatByCoords2(seats, colIndex, rowIndex));
+            return seatRow;
+        });
+    }
 
-    console.log('zzz');
-    console.log('qqq', nofColumns, nofRows, 0, -1);
-    console.log(inBounds(nofColumns, nofRows, -1, 0));
-    console.log(inBounds(nofColumns, nofRows, 0, -1));
-    console.log('zzz2');
-
-    console.log('');
-    console.log('original');
-    printSeats();
-    console.log(isEqual(seats, last));
-
-    last = [...seats];
-    processRound();
-    console.log('');
-    console.log('first');
-    //console.log(seats);
-    printSeats();
-    console.log(isEqual(seats, last));
-
-    last = [...seats];
-    processRound();
-    console.log('');
-    console.log('second');
-    //console.log(seats);
-    printSeats();
-    console.log(isEqual(seats, last));
-
-    last = [...seats];
-    processRound();
-    last = [...seats];
-    processRound();
-    last = [...seats];
-    processRound();
-    console.log('');
-    console.log('3 more');
-    printSeats();
-    console.log(isEqual(seats, last));
-
-    last = [...seats];
-    processRound();
-    console.log('');
-    console.log('1 more');
-    printSeats();
-    console.log(isEqual(seats, last));*/
-
+    
     let cmp = [...seats].map(r => r.map(s => '.' as Seat));
     while (!isEqual(cmp, seats)) {
         cmp = [...seats];
         processRound();
+    }
+
+    console.log(countOccupied(seats));
+
+    seats = [...original];
+    console.log('');
+    //printSeats();
+    cmp = [...seats].map(r => r.map(s => '.' as Seat));
+    while (!isEqual(cmp, seats)) {
+        cmp = [...seats];
+        processRound2();
+        //console.log('');
+        //printSeats();
     }
 
     console.log(countOccupied(seats));
