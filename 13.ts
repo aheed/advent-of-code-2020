@@ -46,9 +46,9 @@ export const day13b = () => {
 
     let increment = 1;
     let tstamp = buses[0].nr;
-    for (let busIndex = 0; busIndex < buses.length; ++busIndex)
-    {
-        let bus = buses[busIndex];
+
+    buses.forEach(bus => {
+        
         while ( (tstamp + bus.offset) % bus.nr != 0)
         {
             tstamp += increment;
@@ -65,7 +65,8 @@ export const day13b = () => {
         tstamp = snapshot;
 
         //console.log('a', busIndex, tstamp, increment);
-    }
+    });
+    
     console.log(tstamp);
 
 }
