@@ -1,5 +1,5 @@
 
-export const day15 = () => {
+export const _d15 = (turns: number) => {
     let input = [0,12,6,13,20,1,17];
     //let input = [2,1,3];
     //let input = [0,3,6];
@@ -7,8 +7,7 @@ export const day15 = () => {
     let speakTime = 0;
     let lastNum = 0;
 
-    while (speakTime < 2020) {
-    
+    while (speakTime < turns) {
         
         let newNum = 0;
         if (speakTime < input.length) {
@@ -34,3 +33,10 @@ export const day15 = () => {
 
 }
 
+export const day15 = () => {
+    _d15(2020);
+}
+
+export const day15b = () => {
+    _d15(30000000);
+}
