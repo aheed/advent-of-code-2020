@@ -3,6 +3,7 @@ import { day10 } from "./10/10";
 import { day11 } from "./11/11";
 import { day12 } from "./12";
 import { day13, day13b } from "./13";
+import { day14 } from "./14";
 import { day2, day2b } from "./2/2";
 import { day3, day3b } from "./3/3";
 import { day4, day4b } from "./4/4";
@@ -32,8 +33,9 @@ import { day9 } from "./9/9";
 //day10();
 //day11();
 //day12();
-day13();
-day13b();
+// day13();
+// day13b();
+day14();
 
 
 
