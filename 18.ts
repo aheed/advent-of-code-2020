@@ -51,9 +51,45 @@ const evaluate = (nodes: Node[]): number => {
     else if (oper.op == '*') {
         operationResult = operand1.getValue() * operand2.getValue();
     }
-    return  + evaluate([new Literal(operationResult), ...nodes.slice(3)]);
+    return evaluate([new Literal(operationResult), ...nodes.slice(3)]);
 }
 
+const evaluate2 = (nodes: Node[]): number => {
+    //console.log(nodes);
+    if (nodes.length == 0) {
+        return 0;
+    }
+
+    if (nodes.length == 1) {
+        return (nodes[0] as Operand).getValue();
+    }
+
+    //console.log(nodes);
+
+    let startIndex = nodes.findIndex(node => node instanceof Operator && node.op == '+') - 1;
+    // if (startIndex >= 0) {
+    //     console.log('startIndex:', startIndex);
+    // }
+
+    if (startIndex < 0) {
+        startIndex = 0;
+    }  
+
+    let oper = nodes[startIndex + 1] as Operator;
+    let operand1 = nodes[startIndex] as Operand;
+    let operand2 = nodes[startIndex + 2] as Operand;
+
+    let operationResult: number = 0;
+    if (oper.op == '+') {
+        operationResult = operand1.getValue() + operand2.getValue();
+    }
+    else if (oper.op == '*') {
+        operationResult = operand1.getValue() * operand2.getValue();
+    }
+    //let preSlice: Node[] = startIndex > 0 ? nodes.slice(0, startIndex) : [];
+    let preSlice: Node[] = nodes.slice(0, startIndex);
+    return evaluate2([...preSlice, new Literal(operationResult), ...nodes.slice(startIndex + 3)]);
+}
 
 // enum ParseState {
 //     Initial = 1,
@@ -61,10 +97,12 @@ const evaluate = (nodes: Node[]): number => {
 // }
 
 class Expression implements Operand {
-    constructor(expr: string) {
+    constructor(expr: string, evalFun: (nodes: Node[]) => number) {
         this.expr = expr;
+        this.evalFun = evalFun;
     }
 
+    evalFun: (nodes: Node[]) => number;
     
     private parse = (): Node[] => {
 
@@ -92,7 +130,7 @@ class Expression implements Operand {
                         --parenthesisCount;
                     }
                 }
-                newNode = new Expression(this.expr.substring(exprStart, pos));
+                newNode = new Expression(this.expr.substring(exprStart, pos), this.evalFun);
             }
             else if (nextChar == '+' ||  nextChar == '*') {
                 newNode = new Operator(nextChar);
@@ -113,7 +151,7 @@ class Expression implements Operand {
 
     getValue = (): number => {
         let nodes = this.parse();
-        return evaluate(nodes);
+        return this.evalFun(nodes);
     }
 
     expr: string;
@@ -124,20 +162,23 @@ class Expression implements Operand {
 export const day18 = () => {
 
     let rows = getInputRows('./input/18.txt');
-    //console.log(rows);
 
-    let exprs: Node[] = rows.map(row => new Expression(row));
-    //console.log(exprs);
-
-    // console.log(exprs[1]);
-    // let test = evaluate([exprs[1]]);
-    // //let test = (exprs[0] as Operand).getValue();
-    // console.log(test);
-    
+    // Part 1
+    let exprs: Node[] = rows.map(row => new Expression(row, evaluate));
 
     let exprResults = exprs.map(e => evaluate([e]));
-    console.log(exprResults);
+    //console.log(exprResults);
 
     let sum = exprResults.reduce((prev, curr) => prev + curr);
     console.log(sum);
+
+    
+    // Part 2
+    let exprs2: Node[] = rows.map(row => new Expression(row, evaluate2));
+
+    let exprResults2 = exprs2.map(e => evaluate2([e]));
+    //console.log(exprResults2);
+
+    let sum2 = exprResults2.reduce((prev, curr) => prev + curr);
+    console.log(sum2);
 }
