@@ -2,7 +2,7 @@ import { getInputRows } from "./utils/utils";
 
 export const day19 = () => {
 
-    let rows = getInputRows('./input/19.txt');
+    let rows = getInputRows('./input/19b.txt');
 
     let nofRules = rows.findIndex(row => row === '');
     //console.log(nofRules);
@@ -79,6 +79,11 @@ class Rule {
 
     static getPostStringsAfterSequenceMatch = (expressions: Set<string>, sequence: string[], ruleMap: Map<string, Rule>): [boolean, Set<string>] => {
         if (sequence.length == 0) {
+            return [true, expressions];
+        }
+
+        if (expressions.size == 0) {
+            console.log("odd!!!");
             return [true, expressions];
         }
 
