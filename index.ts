@@ -8,6 +8,7 @@ import { day15, day15b } from "./15";
 import { day16 } from "./16";
 import { day17, day17b } from "./17";
 import { day18 } from "./18";
+import { day19 } from "./19";
 import { day2, day2b } from "./2/2";
 import { day3, day3b } from "./3/3";
 import { day4, day4b } from "./4/4";
@@ -46,5 +47,6 @@ import { day9 } from "./9/9";
 //day16();
 // day17();
 // day17b();
-day18();
+//day18();
+day19();
 
